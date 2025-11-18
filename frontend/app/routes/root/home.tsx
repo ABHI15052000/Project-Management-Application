@@ -2,6 +2,7 @@ import React from "react";
 import type { Route } from "../../+types/root";
 import { Button } from "~/components/ui/button";
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
+import { Link } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,8 +13,13 @@ export function meta({}: Route.MetaArgs) {
 
 function Homepage() {
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <Button>Click me</Button>
+    <div className="w-full h-screen flex items-center justify-center gap-4">
+      <Link to="/sign-in">
+        <Button className="bg-blue-500 text-white">Login</Button>
+      </Link>
+      <Link to="/sign-up">
+        <Button variant="outline" className="bg-blue-500 text-white var">Sign up</Button>
+    </Link>
     </div>
   );
 }
