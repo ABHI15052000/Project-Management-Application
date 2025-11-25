@@ -23,8 +23,10 @@ import {
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Link } from "react-router";
+import { useSignUpMutation } from "~/hooks/use-auth.hook";
+import { toast } from "sonner";
 
-type SignupFormData = z.infer<typeof signUpSchema>;
+export type SignupFormData = z.infer<typeof signUpSchema>;
 
 const Signup = () => {
   const form = useForm<SignupFormData>({
@@ -37,7 +39,21 @@ const Signup = () => {
     },
   });
 
-  function onSubmit(data: SignupFormData) {}
+  const { mutate, isPending } = useSignUpMutation();
+
+  function onSubmit(values: SignupFormData) {
+    mutate(values, {
+      onSuccess: () => {
+        toast.success("Account created successfully! Please login.");
+      },
+      onError: (error: any) => {
+        const errorMessage =
+          error.response?.data?.message || "Something went wrong!";
+        toast.error(errorMessage);
+        console.log("Error during sign up:", error);
+      },
+    });
+  }
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
@@ -121,7 +137,9 @@ const Signup = () => {
                   </FormItem>
                 )}
               />
-              <Button className="w-full">Submit</Button>
+              <Button type="submit" className="w-full" disabled={isPending}>
+                Submit
+              </Button>
             </form>
           </Form>
           <CardFooter className="text-center mt-6">

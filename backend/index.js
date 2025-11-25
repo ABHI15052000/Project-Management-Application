@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     methods: ["GET", "PUT", "DELETE", "PUT"],
-    allowedHeaders: ["Content-Type", "Authorizations"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
