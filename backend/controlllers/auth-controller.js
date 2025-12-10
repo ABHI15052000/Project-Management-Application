@@ -67,4 +67,43 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {};
 
-export { registerUser, loginUser };
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    const { userId, purpose } = payload;
+
+    if (!payload || purpose !== "email-verification") {
+      return res.status(401).json({ message: "Unauthorised " });
+    }
+
+    const verification = await Verification.findOne({ userId, token });
+
+    if (!verification) {
+      return res.status(401).json({ message: "Unauthorised " });
+    }
+    const isTokenExpired = verification.expiresAt < new Date();
+
+    if (isTokenExpired) {
+      return res.status(401).json({ message: "Token has expired" });
+    }
+
+    const user = User.findById(userId);
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorised " });
+    }
+
+    user.isVerified = true;
+    await user.save();
+
+    await Verification.findByIdAndDelete(verification._id);
+
+    res.status(200).json({ message: "Email verified successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { registerUser, loginUser, verifyEmail };
