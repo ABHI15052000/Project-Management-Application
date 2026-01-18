@@ -22,11 +22,17 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useLoginMutation } from "~/hooks/use-auth.hook";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "~/provider/auth-context";
 
 type SigninFormData = z.infer<typeof signInSchema>;
 
 const Signin = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const form = useForm<SigninFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -35,7 +41,24 @@ const Signin = () => {
     },
   });
 
-  function onSubmit(data: SigninFormData) {}
+  const { mutate, isPending, error } = useLoginMutation();
+
+  function onSubmit(value: SigninFormData) {
+    mutate(value, {
+      onSuccess: (data) => {
+        login(data);
+        console.log("Login successful:", data);
+        toast.success("Login successful!");
+        navigate("/dashboard");
+      },
+      onError: (error: any) => {
+        const errorMessage =
+          error?.response?.data?.message || "An unexpected error occurred.";
+        console.error("Login failed:", error);
+        toast.error(errorMessage);
+      },
+    });
+  }
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
@@ -91,7 +114,13 @@ const Signin = () => {
                   </FormItem>
                 )}
               />
-              <Button className="w-full">Submit</Button>
+              <Button className="w-full" type="submit" disabled={isPending}>
+                {isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Sign in"
+                )}
+              </Button>
             </form>
           </Form>
           <CardFooter className="text-center mt-6">

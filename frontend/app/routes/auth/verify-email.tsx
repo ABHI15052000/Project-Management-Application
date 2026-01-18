@@ -3,25 +3,43 @@ import { Link, useSearchParams } from "react-router";
 import { set } from "zod";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { ArrowLeft, CheckCircle, Loader, XCircle } from "lucide-react";
+import { useVerifyEmailMutation } from "~/hooks/use-auth.hook";
+import { toast } from "sonner";
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
+
+  const { mutate, isPending: isVerifying } = useVerifyEmailMutation();
 
   useEffect(() => {
     const token = searchParams.get("token");
     if (!token) {
       setIsSuccess(false);
     } else {
+      mutate(token, {
+        onSuccess: () => {
+          setIsSuccess(true);
+        },
+        onError: (error: any) => {
+          const errorMessage =
+            error.response?.data?.message ||
+            "An error occurred during email verification.";
+          toast.error(errorMessage);
+          setIsSuccess(false);
+          console.log(error);
+        },
+      });
       setIsSuccess(true);
     }
   }, [searchParams]);
   return (
     <div className="flex flex-col justify-center items-center h-screen">
-      <h1 className="text-2xl font-bold">Verify Email</h1>
-      <p className="text-sm text-grey-500">Verify your email...</p>
-      <Card className="w-full max-w-md">
+      <h1 className="text-2xl font-bold">Verifying Email</h1>
+      <p className="text-sm text-grey-500">
+        Please wait while your email is getting verified...
+      </p>
+      <Card className="w-full max-w-md mt-5">
         <CardHeader></CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-6">
@@ -44,7 +62,7 @@ const VerifyEmail = () => {
                 </p>
                 <Link
                   to="/sign-in"
-                  className="flex items-center text-blue-500 hover:underline"
+                  className="flex items-center text-blue-500 hover:underline mt-6"
                 >
                   <ArrowLeft className="mr-2" />
                   Back to Sign In
