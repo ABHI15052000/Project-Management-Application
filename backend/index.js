@@ -12,9 +12,9 @@ const app = express();
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
-    methods: ["GET", "PUT", "DELETE", "PUT"],
+    methods: ["GET", "PUT", "DELETE", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 mongoose

@@ -2,10 +2,18 @@ export interface User {
   _id: string;
   email: string;
   name: string;
-  profilePicture?: string;
+  createdAt: Date;           // timestamps
   isEmailVerified: boolean;
-  lastLogin?: string;          // Date in ISO format
+  lastLogin?: Date;          // Date in ISO format
   is2FAEnabled: boolean;
-  createdAt: string;           // timestamps
-  updatedAt: string;
+  updatedAt: Date;
+  profilePicture?: string;
+}
+
+export interface Workspace {
+  _id: string;
+  name: string;
+  color: string;
+  description?: string;
+  owner: User | string;
 }

@@ -24,3 +24,9 @@ export const resetPasswordSchema = z.object({
 export const emailSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
+
+export const workspaceSchema = z.object({
+  name: z.string().min(3, "Workspace name should contain atleast 3 characters"),
+  description: z.string().optional(),
+  color: z.string().min(1, "Color is required"),
+});

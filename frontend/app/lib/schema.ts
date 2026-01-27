@@ -24,3 +24,9 @@ export const resetPasswordRequestSchema = z.object({
     confirmPassword: z.string().min(8, "Confirm Password is required"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match", })
+
+export const workspaceSchema = z.object({
+    name: z.string().min(3, "Workspace name should contain atleast 3 characters"),
+    color: z.string().min(3, "Color is required"),    
+    description: z.string().optional(),
+})
