@@ -1,12 +1,20 @@
-import { Loader, Loader2, PlusCircle } from "lucide-react";
+import { Loader, Loader2, PlusCircle, Users } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { NoDataFound } from "~/components/no-data-found";
 import { Button } from "~/components/ui/button";
-import { Card, CardHeader } from "~/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import { CreateWorkspace } from "~/components/workspace/create-workspace";
+import { WorkspaceAvatar } from "~/components/workspace/workspace-avatar";
 import { useGetWorkspaecesQuery } from "~/hooks/use-workspace";
 import type { Workspace } from "~/types";
+import { format } from "date-fns";
 
 const Workspaces = () => {
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
@@ -58,7 +66,34 @@ const WorkspaceCard = ({ workspace }: { workspace: Workspace }) => {
   return (
     <Link to={`/workspaces/${workspace._id}`}>
       <Card className="transition-all hover:shadow-md hover:-translate-y-1">
-        <CardHeader></CardHeader>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <WorkspaceAvatar name={workspace.name} color={workspace.color} />
+              <div>
+                <CardTitle>{workspace.name}</CardTitle>
+                <span className="text-xs text-muted-foreground">
+                  Created at {format(workspace.createdAt, "MMM dd, yyyy")}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center text-muted-foreground">
+              <Users className="size-4 mr-1" />
+              <span className="text-xs">{workspace.members?.length || 0}</span>
+            </div>
+          </div>
+
+          <CardDescription>
+            {workspace.description || "No description "}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="text-sm text-muted-foreground">
+            View workspace details and projects
+          </div>
+        </CardContent>
       </Card>
     </Link>
   );

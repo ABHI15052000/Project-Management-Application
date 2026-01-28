@@ -16,4 +16,7 @@ export interface Workspace {
   color: string;
   description?: string;
   owner: User | string;
+  createdAt: Date;
+  updatedAt: Date;
+  members: Array<User | string>;
 }
